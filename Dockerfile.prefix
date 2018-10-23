@@ -1,0 +1,2 @@
+FROM python:2-alpine3.7
+COPY ./certbot-slim /opt/certbot/src/
