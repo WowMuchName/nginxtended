@@ -1,0 +1,2 @@
+COPY --from=gobuilder /go/configurator /go/template.https.conf /go/template.stream.conf /go/template.cert.sh /var/lib/configurator/
+COPY --from=certbot /opt/certbot-slim /opt/certbot/src/
