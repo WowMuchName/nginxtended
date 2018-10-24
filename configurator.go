@@ -91,7 +91,7 @@ func main() {
 
 	// Start nginx
 	if len(os.Args) == 1 {
-		ticker := time.NewTicker(time.Minute)
+		ticker := time.NewTicker(24 * 7 * time.Hour)
 		quit := make(chan struct{})
 		go func() {
 			for {
