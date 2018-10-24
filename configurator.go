@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"time"
 
 	"./shared"
 )
@@ -90,7 +91,31 @@ func main() {
 
 	// Start nginx
 	if len(os.Args) == 1 {
+		ticker := time.NewTicker(time.Minute)
+		quit := make(chan struct{})
+		go func() {
+			for {
+				select {
+				case <-ticker.C:
+					println("Renewing certs")
+					err = shared.Run(exec.Command("certbot", "renew"))
+					if err == nil {
+						err = shared.Run(exec.Command("nginx", "-t"))
+						if err == nil {
+							err = shared.Run(exec.Command("nginx", "-s", "reload"))
+						}
+					}
+					if err != nil {
+						println("Renewing certs failed", err)
+					}
+				case <-quit:
+					ticker.Stop()
+					return
+				}
+			}
+		}()
 		err = shared.Run(exec.Command("nginx", "-g", "daemon off;"))
+		close(quit)
 	} else if os.Args[1] == "dry-run" {
 		println("Dry-run complete")
 	} else if os.Args[1] == "reload" {
@@ -104,4 +129,3 @@ func main() {
 		panic(err)
 	}
 }
-

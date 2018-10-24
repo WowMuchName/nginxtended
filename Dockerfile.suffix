@@ -1,7 +1,7 @@
-ADD nginx.conf /etc/nginx/
+ADD nginx.conf global.conf /etc/nginx/
 ADD configurator template.https.conf template.stream.conf template.cert.sh /var/lib/configurator/
 RUN mkdir /webroot && mkdir /backends && mkdir /etc/nginx/stream-conf.d && mkdir /certs && ln -s /var/lib/configurator/configurator /usr/sbin/configurator && ln -s /certs /etc/letsencrypt
 
-VOLUME /webroot /certs /etc/nginx/backends
+VOLUME /certs /backends
 WORKDIR /var/lib/configurator
-CMD ["configurator"]
+ENTRYPOINT ["configurator"]

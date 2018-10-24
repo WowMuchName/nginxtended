@@ -22,4 +22,3 @@ if [ ! -f "{{$client.CommonName}}.p12" ]; then
     openssl pkcs12 -export -out "{{$client.CommonName}}.p12" -inkey "{{$client.CommonName}}.key" -in "{{$client.CommonName}}.crt" -certfile ../{{$root.Domain}}.client.crt -passout pass:"{{$client.CommonName}}"
 fi
 {{ end }}{{ end }}
-
