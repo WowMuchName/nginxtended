@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  nginxtended:
+    image: "wowmuchname/nginxtended"
+    volumes:
+      - certs:/certs
+      - backends:/backends
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - proxy-net
+volumes:
+  certs:
+    external: true
+  backends:
+    external: true
+networks:
+  proxy-net:
+    external: true

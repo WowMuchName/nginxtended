@@ -18,4 +18,4 @@ cat "Dockerfile.prefix" > Dockerfile
 curl https://raw.githubusercontent.com/certbot/certbot/master/Dockerfile | grep -v -e "EXPOSE" -e "ENTRYPOINT" -e "LABEL" -e "FROM" -e "VOLUME" -e "CMD" -e "COPY" -e "WORKDIR" >> Dockerfile
 curl https://raw.githubusercontent.com/nginxinc/docker-nginx/master/stable/alpine/Dockerfile | grep -v -e "EXPOSE" -e "ENTRYPOINT" -e "FROM" -e "LABEL" -e "CMD" -e "COPY" -e "VOLUME" -e "WORKDIR" >> Dockerfile
 cat "Dockerfile.suffix" >> Dockerfile
-docker build -t proxyx .
+docker build -t "wowmuchname/nginxtended" .
