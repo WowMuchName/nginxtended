@@ -24,3 +24,4 @@ if [ -d /etc/letsencrypt/live/{{.Domain}}/ ]; then
     fi
     {{ end }}{{ end }}
 fi
+
