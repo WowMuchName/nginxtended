@@ -110,6 +110,25 @@ func LoadEndpointFiles(InputDir string) (map[string]EndpointFile, error) {
 	return fileMap, nil
 }
 
+func CleanDir(outputDir string, extension string) error {
+	files, err := ioutil.ReadDir(outputDir)
+	if err != nil {
+		return err
+	}
+	for _, file := range files {
+		name := file.Name()
+		if strings.HasSuffix(name, extension) && strings.HasPrefix(name, derivedPrefix) {
+			out := filepath.Join(outputDir, name)
+			fmt.Println("Remove File", out)
+			err = os.Remove(out)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func ProcessDir(
 	templatePath string,
 	outputDir string,
@@ -205,5 +224,23 @@ func Run(cmd *exec.Cmd) error {
 	return nil
 }
 
-const derivedPrefix = "derived_"
+func RunWithCallback(cmd *exec.Cmd, callback func() error) error {
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	err := cmd.Start()
+	if err != nil {
+		return err
+	}
+	err = callback()
+	if err != nil {
+		cmd.Process.Kill()
+		return err
+	}
+	err = cmd.Wait()
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
+const derivedPrefix = "derived_"
