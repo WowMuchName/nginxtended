@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -51,6 +53,21 @@ func cleanConfigs(vHostsPath string, tcpVHostsPath string) error {
 		err = shared.CleanDir(tcpVHostsPath, ".conf")
 	}
 	return err
+}
+
+func waitForHttpPort() error {
+	var tries = 10
+	for {
+		conn, err := net.Dial("tcp", "localhost:80")
+		if err == nil {
+			conn.Close()
+			return nil
+		}
+		if tries--; tries == 0 {
+			return errors.New("Timeout waiting for http socket")
+		}
+		//time.Sleep(250 * time.Millisecond)
+	}
 }
 
 func rebuildConfigs(
@@ -141,8 +158,12 @@ func main() {
 		// Start nginx without managed configs so it can be used as webroot
 		quit := make(chan struct{})
 		err = shared.RunWithCallback(exec.Command("nginx", "-g", "daemon off;"), func() error {
+			err := waitForHttpPort()
+			if err != nil {
+				return err
+			}
 			println("Nginx started without managed configs")
-			err := reload(
+			err = reload(
 				endpointFiles,
 				vHostsPath,
 				tcpVHostsPath,
@@ -181,6 +202,8 @@ func main() {
 			tcpVHostsPath,
 			certScript,
 		)
+	} else if os.Args[1] == "wait-port" {
+		err = waitForHttpPort()
 	} else if os.Args[1] == "clean" {
 		cleanConfigs(vHostsPath, tcpVHostsPath)
 	} else if os.Args[1] == "reload" {
