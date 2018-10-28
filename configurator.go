@@ -66,7 +66,7 @@ func waitForHttpPort() error {
 		if tries--; tries == 0 {
 			return errors.New("Timeout waiting for http socket")
 		}
-		//time.Sleep(250 * time.Millisecond)
+		time.Sleep(250 * time.Millisecond)
 	}
 }
 

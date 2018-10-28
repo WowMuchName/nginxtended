@@ -1,4 +1,5 @@
 ADD nginx.conf global.conf /etc/nginx/
+COPY --from=gobuilder /go/configurator /go/template.https.conf /go/template.stream.conf /go/template.cert.sh /var/lib/configurator/
 RUN mkdir /webroot \
  && mkdir /backends \
  && mkdir /etc/nginx/stream-conf.d \

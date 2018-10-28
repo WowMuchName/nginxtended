@@ -1,4 +1,4 @@
-FROM golang as gobuilder
+FROM golang:alpine as gobuilder
 ADD . /go
 RUN go build -o configurator
 
@@ -14,7 +14,6 @@ RUN mkdir -p /opt/certbot-slim \
  && rm -r /opt/certbot-slim/acme/examples \
  && rm -r /opt/certbot-slim/certbot/tests
 FROM python:2-alpine3.7
-COPY --from=gobuilder /go/configurator /go/template.https.conf /go/template.stream.conf /go/template.cert.sh /var/lib/configurator/
 COPY --from=certbot /opt/certbot-slim /opt/certbot/src/
 # Certbots filtered Dockerfile
 
@@ -179,6 +178,7 @@ STOPSIGNAL SIGTERM
 
 # End of Nginx's Dockerfile
 ADD nginx.conf global.conf /etc/nginx/
+COPY --from=gobuilder /go/configurator /go/template.https.conf /go/template.stream.conf /go/template.cert.sh /var/lib/configurator/
 RUN mkdir /webroot \
  && mkdir /backends \
  && mkdir /etc/nginx/stream-conf.d \
