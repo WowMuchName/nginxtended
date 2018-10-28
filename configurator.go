@@ -135,11 +135,13 @@ func main() {
 	if len(os.Args) == 1 {
 		// There might be configs using certs we don't have any more.
 		// Remove all manage configs
+		println("Removing managed configs")
 		cleanConfigs(vHostsPath, tcpVHostsPath)
 
 		// Start nginx without managed configs so it can be used as webroot
 		quit := make(chan struct{})
 		err = shared.RunWithCallback(exec.Command("nginx", "-g", "daemon off;"), func() error {
+			println("Nginx started without managed configs")
 			err := reload(
 				endpointFiles,
 				vHostsPath,
@@ -149,6 +151,7 @@ func main() {
 			if err != nil {
 				return err
 			}
+			println("Nginx reloaded with managed configs")
 			ticker := time.NewTicker(24 * 7 * time.Hour)
 			go func() {
 				for {
