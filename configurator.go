@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"./shared"
@@ -206,6 +207,27 @@ func main() {
 		err = waitForHttpPort()
 	} else if os.Args[1] == "clean" {
 		cleanConfigs(vHostsPath, tcpVHostsPath)
+	} else if os.Args[1] == "get" {
+		var args = []string{
+			"certonly",
+			"--agree-tos",
+			"--non-interactive",
+			"--webroot",
+			"-w",
+			"/webroot",
+		}
+
+		for i := 2; i < len(os.Args); i++ {
+			str := os.Args[i]
+			if strings.Contains(str, "@") {
+				args = append(args, "--email", str)
+			} else {
+				args = append(args, "-d", str)
+			}
+		}
+		err = shared.Run(exec.Command(
+			"certbot",
+			args...))
 	} else if os.Args[1] == "reload" {
 		err = reload(
 			endpointFiles,
