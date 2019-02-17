@@ -1,11 +1,6 @@
 ADD nginx.conf global.conf /etc/nginx/
 COPY --from=gobuilder /go/configurator /go/template.https.conf /go/template.stream.conf /go/template.cert.sh /var/lib/configurator/
 RUN mkdir /webroot \
- && mkdir /backends \
- && mkdir /etc/nginx/stream-conf.d \
- && mkdir /certs \
- && ln -s /var/lib/configurator/configurator /usr/sbin/configurator \
- && ln -s /certs /etc/letsencrypt
-VOLUME /certs /backends
+ && mkdir /etc/nginx/stream-conf.d
 WORKDIR /var/lib/configurator
-ENTRYPOINT ["configurator"]
+ENTRYPOINT ["/var/lib/configurator/configurator"]

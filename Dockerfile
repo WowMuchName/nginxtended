@@ -1,44 +1,11 @@
 FROM golang:alpine as gobuilder
 ADD . /go
 RUN go build -o configurator
-
-FROM certbot/certbot as certbot
-RUN mkdir -p /opt/certbot-slim \
- && cp /opt/certbot/src/README.rst /opt/certbot-slim/ \
- && cp /opt/certbot/src/CHANGES.rst /opt/certbot-slim/ \
- && cp /opt/certbot/src/setup.py /opt/certbot-slim/ \
- && cp -r /opt/certbot/src/acme /opt/certbot-slim/ \
- && cp -r /opt/certbot/src/certbot /opt/certbot-slim/ \
- && rm -r /opt/certbot-slim/acme/acme/testdata \
- && rm -r /opt/certbot-slim/acme/docs \
- && rm -r /opt/certbot-slim/acme/examples \
- && rm -r /opt/certbot-slim/certbot/tests
-FROM python:2-alpine3.7
-COPY --from=certbot /opt/certbot-slim /opt/certbot/src/
-# Certbots filtered Dockerfile
-
-
-
-RUN apk add --no-cache --virtual .certbot-deps \
-        libffi \
-        libssl1.0 \
-        openssl \
-        ca-certificates \
-        binutils
-RUN apk add --no-cache --virtual .build-deps \
-        gcc \
-        linux-headers \
-        openssl-dev \
-        musl-dev \
-        libffi-dev \
-    && pip install --no-cache-dir \
-        --editable /opt/certbot/src/acme \
-        --editable /opt/certbot/src \
-    && apk del .build-deps
+FROM certbot/certbot
 # Nginx's filtered Dockerfile
 
 
-ENV NGINX_VERSION 1.14.0
+ENV NGINX_VERSION 1.14.2
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& CONFIG="\
@@ -180,11 +147,6 @@ STOPSIGNAL SIGTERM
 ADD nginx.conf global.conf /etc/nginx/
 COPY --from=gobuilder /go/configurator /go/template.https.conf /go/template.stream.conf /go/template.cert.sh /var/lib/configurator/
 RUN mkdir /webroot \
- && mkdir /backends \
- && mkdir /etc/nginx/stream-conf.d \
- && mkdir /certs \
- && ln -s /var/lib/configurator/configurator /usr/sbin/configurator \
- && ln -s /certs /etc/letsencrypt
-VOLUME /certs /backends
+ && mkdir /etc/nginx/stream-conf.d
 WORKDIR /var/lib/configurator
-ENTRYPOINT ["configurator"]
+ENTRYPOINT ["/var/lib/configurator/configurator"]

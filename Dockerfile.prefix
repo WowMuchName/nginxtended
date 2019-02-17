@@ -1,15 +1,4 @@
 FROM golang:alpine as gobuilder
 ADD . /go
 RUN go build -o configurator
-
-FROM certbot/certbot as certbot
-RUN mkdir -p /opt/certbot-slim \
- && cp /opt/certbot/src/README.rst /opt/certbot-slim/ \
- && cp /opt/certbot/src/CHANGES.rst /opt/certbot-slim/ \
- && cp /opt/certbot/src/setup.py /opt/certbot-slim/ \
- && cp -r /opt/certbot/src/acme /opt/certbot-slim/ \
- && cp -r /opt/certbot/src/certbot /opt/certbot-slim/ \
- && rm -r /opt/certbot-slim/acme/acme/testdata \
- && rm -r /opt/certbot-slim/acme/docs \
- && rm -r /opt/certbot-slim/acme/examples \
- && rm -r /opt/certbot-slim/certbot/tests
+FROM certbot/certbot

@@ -3,7 +3,7 @@
 A docker-image containing Nginx and Certbot, based on alpine-linux, wrapped into a convenient package optimized for SSL-termination use-cases.
 
 ## Features
-* ~115MB small image based on alpine
+* ~122MB small image based on alpine
 * Full versions of Nginx and Certbot
 * Drop-in replacement for the official nginx image
 * Modified Nginx root-configuration (/etc/nginx/nginx.conf) that is tweaked for use as a reverse proxy with docker and Certbot
@@ -21,7 +21,7 @@ services:
   nginxtended:
     image: "wowmuchname/nginxtended"
     volumes:
-      - certs:/certs
+      - certs:/etc/letsencrypt
       - backends:/backends
     ports:
       - 80:80

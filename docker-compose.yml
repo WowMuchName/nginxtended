@@ -1,9 +1,9 @@
 version: "3.7"
 services:
   nginxtended:
-    image: "wowmuchname/nginxtended"
+    image: "wowmuchname/nginxtended:dev"
     volumes:
-      - certs:/certs
+      - certs:/etc/letsencrypt
       - backends:/backends
     ports:
       - 80:80
