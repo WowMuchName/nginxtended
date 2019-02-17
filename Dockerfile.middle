@@ -1,1 +1,0 @@
-COPY --from=certbot /opt/certbot-slim /opt/certbot/src/
