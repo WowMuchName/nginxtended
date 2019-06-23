@@ -1,4 +1,0 @@
-FROM golang:alpine as gobuilder
-ADD . /go
-RUN go build -o configurator
-FROM certbot/certbot
