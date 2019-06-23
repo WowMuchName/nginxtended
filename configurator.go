@@ -206,7 +206,7 @@ func main() {
 	} else if os.Args[1] == "wait-port" {
 		err = waitForHttpPort()
 	} else if os.Args[1] == "clean" {
-		cleanConfigs(vHostsPath, tcpVHostsPath)
+		err = cleanConfigs(vHostsPath, tcpVHostsPath)
 	} else if os.Args[1] == "get" {
 		var args = []string{
 			"certonly",
