@@ -115,10 +115,17 @@ in your JSON file.
 ## Beyond Cerbot
 
 ### Client-Certificates
-Apart from letting certbot obtain certificates for Https/TLS-Termination, nginxtended creates a server-key and certificate for use
-with client authentication (if they do not already exist). They are put into /certs/live/DOMAIN, that is the same place cerbot
-puts its certs. If you specify clients in your config, a subdirectory is created containing a private-key, a certificate and 
-a p12 Cryptographic storage for each client of the V-Host (they are not shared among hosts).
+Apart from letting certbot obtain certificates for Https/TLS-Termination, nginxtended creates a server-key and certificate for use with client authentication (if they do not already exist). They are put into *certs-volume*/live/*fqdn*, that is the same place cerbot links the certificates and keys used for SSL.
+
+### Automatic client-certificate creation
+If you specify clients in your config, a subdirectory is created containing a private-key, a certificate and a p12 Cryptographic storage for each client of the V-Host (they are not shared among hosts). The p12 file uses the client's name as specified in the config for a password.
+
+### Manual client-certificate creation (recommended)
+Client-Certificates can also be generated manually. Nginxtended comes with a handy script called make-user-cert.sh. This script is copied into the *certs* volume every time nginxtended starts. Provided you have openssl installed on the host and you are using a hostmount as your *certs* volume, you can create a client-certificate directly on the host.
+```
+/var/lib/docker/volume/*certs*/_data/make-user-cert.sh *UserName* /var/lib/docker/volume/*certs*/_data/live/*domain*
+```
+The command will ask you for a password and create a encrypted p12 file in the current working directory.
 
 ### Perfect Forward Secrecy
 Nginxtended creates individual ssl_dhparam files for each V-Host if they do not already exist. They are put into /certs/live/DOMAIN.

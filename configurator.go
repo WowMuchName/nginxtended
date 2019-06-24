@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"io/ioutil"
 	"net"
 	"os"
 	"os/exec"
@@ -142,6 +143,16 @@ func main() {
 	println("tcpVHostsPath ", tcpVHostsPath)
 	println("certScript    ", certScript)
 	println("backendsPath  ", backendsPath)
+
+	// Create a copy of the user-cert script in the cert volume
+	data, err := ioutil.ReadFile("make-user-cert.sh")
+	if err != nil {
+		panic(err)
+	}
+	err = ioutil.WriteFile(filepath.Join(certbotPath, "make-user-cert.sh"), data, 0755)
+	if err != nil {
+		panic(err)
+	}
 
 	// Load endpoint-files
 	endpointFiles, err := shared.LoadEndpointFiles(backendsPath)
